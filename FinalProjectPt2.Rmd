@@ -1,0 +1,251 @@
+---
+title: "Final Project - Part 2"
+author: "Joanna Cuff, Cindy Liu, Caitlin Alano and Gina Wang"
+output:
+  html_document:
+    df_print: paged
+  word_document: default
+---
+
+**Goals of the analysis**
+
+For the final project, the data we analyzed was from the Runners’ times in the Cherry Blossom Race. We used the N-Time on the 2011 Alphabetically Ordered Data of all racers. Our goals are to create a visual comparison of sex and average times of racers in different age groups. This would be portrayed through a bar plot grouped by age groups and then each age group would be grouped by sex. Each age group would have two bars, with one for females and one for males. The response variable would be average times for each groups, plotted on the Y axis.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+run_data <- read.csv("/Users/caitlinalano/Downloads/run_data.csv", stringsAsFactors = FALSE)
+```
+
+```{r}
+run_data %>% head(10)
+```
+
+# Filtering between genders
+```{r}
+#tidy data and delete "separating" row
+tidy_run_data <- run_data[-1, ]
+#tidy_run_data
+
+tidy_run_data2<- tidy_run_data %>%
+  separate (N.Time, c("Hours", "Minutes", "Seconds"), sep = ":")
+
+tidy_run_data2$Hours <- as.numeric(as.character(tidy_run_data2$Hours))
+tidy_run_data2$Minutes <- as.numeric(as.character(tidy_run_data2$Minutes))
+tidy_run_data2$Seconds <- as.numeric(as.character(tidy_run_data2$Seconds))
+#tidy_run_data2
+
+tidy_run_data_short <- tidy_run_data2 %>%
+  select(S, Ag, Hours, Minutes, Seconds)  %>%
+  filter (Hours>2) %>%
+  mutate(Minutes = Hours, Seconds = Minutes, Hours = 0)
+#tidy_run_data_short
+
+tidy_run_data2 <- tidy_run_data2 %>%
+  select(S, Ag, Hours, Minutes, Seconds)  %>%
+  filter(Hours < 3) 
+#tidy_run_data2
+
+tidy_run_data3 = rbind(tidy_run_data_short, tidy_run_data2)
+tidy_run_data3 %>% head(10)
+
+tidy_run_data3 <- tidy_run_data3 %>%
+  mutate(Time_Min = (Hours * 60) + Minutes + (Seconds / 60)) %>%
+  select (S, Ag, Time_Min)
+
+#only males
+males <- tidy_run_data3 %>%
+  filter( S == "M")
+males %>% head(10)
+
+#only females
+females <- tidy_run_data3 %>%
+  filter(S == "F")
+females %>% head(10)
+```
+
+# Filtering Males by age groups
+```{r}
+#Males filter between age groups
+min(males$Ag); max(males$Ag)
+#males min age = 11, males max age = 83
+MAge_less20 <- males %>%
+  filter (Ag >= 10, Ag < 20) %>%
+  summarise (Avg_MAge_less20 = mean(Time_Min))
+MAge_20_30 <- males %>%
+  filter( Ag >= 20, Ag < 30) %>%
+  summarise (Avg_MAge_20_30 = mean(Time_Min))
+MAge_30_40 <- males %>%
+  filter( Ag >= 30, Ag < 40) %>%
+  summarise (Avg_MAge_30_40 = mean(Time_Min))
+MAge_40_50 <- males %>%
+  filter( Ag >= 40, Ag < 50) %>%
+  summarise (Avg_MAge_40_50 = mean(Time_Min))
+MAge_50_60 <- males %>%
+  filter( Ag >= 50, Ag < 60) %>%
+  summarise (Avg_MAge_50_60 = mean(Time_Min))
+MAge_60_70 <- males %>%
+  filter( Ag >= 60, Ag < 70) %>%
+  summarise (Avg_MAge_60_70 = mean(Time_Min))
+MAge_70plus <- males %>%
+  filter( Ag >= 70) %>%
+  summarise (Avg_MAge_70plus = mean(Time_Min))
+
+```
+
+# Filtering Females by age groups
+```{r}
+#Females filter between age groups
+min(females$Ag); max(females$Ag)
+# female min age = 11, female max age = 76
+FAge_less20 <- females %>%
+  filter (Ag < 20) %>%
+  summarise(Avg_FAge_less20 = mean(Time_Min))
+FAge_20_30 <- females %>%
+  filter( Ag >= 20, Ag < 30) %>%
+  summarise(Avg_FAge_20_30 = mean(Time_Min))
+FAge_30_40 <- females %>%
+  filter( Ag >= 30, Ag < 40) %>%
+  summarise(Avg_FAge_30_40 = mean(Time_Min))
+FAge_40_50 <- females %>%
+  filter( Ag >= 40, Ag < 50) %>%
+  summarise(Avg_FAge_40_50 = mean(Time_Min))
+FAge_50_60 <- females %>%
+  filter( Ag >= 50, Ag < 60) %>%
+  summarise(Avg_FAge_50_60 = mean(Time_Min))
+FAge_60_70 <- females %>%
+  filter( Ag >= 60, Ag < 70) %>%
+  summarise(Avg_FAge_60_70 = mean(Time_Min))
+FAge_70plus <- females %>%
+  filter( Ag >= 70) %>%
+  summarise(Avg_FAge_70plus = mean(Time_Min))
+
+```
+# Make Data Frame
+```{r}
+df1 <- c(FAge_less20, FAge_20_30, FAge_30_40, FAge_40_50,FAge_50_60,FAge_60_70, FAge_70plus)
+df2 <- c(MAge_less20, MAge_20_30, MAge_30_40, MAge_40_50,MAge_50_60,MAge_60_70, MAge_70plus)
+  
+
+df_female <- data.frame(df1) 
+df_female1 <- df_female %>%
+  rename("<20" = "Avg_FAge_less20", "20-30" = "Avg_FAge_20_30", "30-40" = "Avg_FAge_30_40", "40-50" = "Avg_FAge_40_50", "50-60" = "Avg_FAge_50_60", "60-70" = "Avg_FAge_60_70", ">70" = "Avg_FAge_70plus" ) %>%
+  gather(key = f_age_groups, value = avg_times)
+df_female1
+
+df_male <- data.frame(df2) 
+df_male1 <- df_male %>%
+  rename("<20" = "Avg_MAge_less20", "20-30" = "Avg_MAge_20_30", "30-40" = "Avg_MAge_30_40", "40-50" = "Avg_MAge_40_50", "50-60" = "Avg_MAge_50_60", "60-70" = "Avg_MAge_60_70", ">70" = "Avg_MAge_70plus" ) %>%
+  gather(key = m_age_groups, value = avg_times)
+df_male1
+
+```
+# Making the Graph
+```{r}
+ggplot(df_female1) + geom_bar(mapping = aes(x = f_age_groups, y = avg_times, fill = f_age_groups), stat = "identity") + labs(x = "Age Groups", y = "Average Times (in min)", title = "Average Time (in min) For Females To Run a 10 Mile Race")  + scale_x_discrete(limits = c("<20", "20-30", "30-40", "40-50", "50-60", "60-70", ">70")) + theme(legend.position = "none")
+
+ggplot(df_male1) + geom_bar(mapping = aes(x = m_age_groups, y = avg_times, fill = m_age_groups), stat = "identity") + labs(x = "Age Groups", y = "Average Times (in min)", title = "Average Time (in min) For Males To Run a 10 Mile Race")  + scale_x_discrete(limits = c("<20", "20-30", "30-40", "40-50", "50-60", "60-70", ">70")) + theme(legend.position = "none")
+```
+  
+#  MAKING IT INTO ONE GRAPH
+
+#  Sorting the data by age group
+```{r}
+
+Age_less20 <- tidy_run_data3 %>%
+  filter (Ag >= 10, Ag < 20) %>%
+  group_by(S) %>%
+  summarise (Avg_Time_less20 = mean(Time_Min))
+Age_less20
+
+Age_20_30 <- tidy_run_data3 %>%
+  filter (Ag >= 20, Ag < 30) %>%
+  group_by(S) %>%
+  summarise (Avg_Time_20_30 = mean(Time_Min))
+Age_20_30
+
+Age_30_40 <- tidy_run_data3 %>%
+  filter (Ag >= 30, Ag < 40) %>%
+  group_by(S) %>%
+  summarise (Avg_Time_30_40 = mean(Time_Min))
+Age_30_40
+
+Age_40_50 <- tidy_run_data3 %>%
+  filter (Ag >= 40, Ag < 50) %>%
+  group_by(S) %>%
+  summarise (Avg_Time_40_50 = mean(Time_Min))
+Age_40_50
+
+Age_50_60 <- tidy_run_data3 %>%
+  filter (Ag >= 50, Ag < 60) %>%
+  group_by(S) %>%
+  summarise (Avg_Time_50_60 = mean(Time_Min))
+Age_50_60
+
+Age_60_70 <- tidy_run_data3 %>%
+  filter (Ag >= 60, Ag < 70) %>%
+  group_by(S) %>%
+  summarise (Avg_Time_60_70 = mean(Time_Min))
+Age_60_70
+
+Age_70plus <- tidy_run_data3 %>%
+  filter (Ag >= 70) %>%
+  group_by(S) %>%
+  summarise (Avg_Time_70_plus = mean(Time_Min))
+Age_70plus
+```
+# Creating the Data Frame
+```{r}
+trial <- c(Age_less20, Age_20_30, Age_30_40, Age_40_50,Age_50_60,Age_60_70, Age_70plus)
+trialdf <- data.frame(trial); trialdf
+
+trialdf1 <- trialdf %>%
+  select(S, Avg_Time_less20, Avg_Time_20_30, Avg_Time_30_40, Avg_Time_40_50, Avg_Time_50_60, Avg_Time_60_70, Avg_Time_70_plus)
+trialdf1
+
+trialdf2 <- trialdf1 %>%
+  rename("Younger than 20" = "Avg_Time_less20", "20-30" = "Avg_Time_20_30", "30-40" = "Avg_Time_30_40", "40-50" = "Avg_Time_40_50", "50-60" = "Avg_Time_50_60", "60-70" = "Avg_Time_60_70", "Older than 70" = "Avg_Time_70_plus" ) %>%
+  gather(key = age_group, value = avg_time, 2:8)
+trialdf2
+```
+
+# Creating the Graph
+```{r}
+ggplot(trialdf2, aes(x = age_group, y = avg_time, fill = S)) + geom_col(position = "dodge") + labs(x = "Age Groups", y = "Average Times (in min)", title = "Average Times (in min) for each age group to run a 10 Mile Race", subtitle = "(separated by sex)") + guides(fill=guide_legend(title="Sex")) + scale_x_discrete(limits = c("Younger than 20", "20-30", "30-40", "40-50", "50-60", "60-70", "Older than 70"))
+```
+
+**Interpreting Code**
+
+After inputting the data, we converted the N-Time into minutes so that it could easily be displayed on the y-axis. We accomplished this by separating the N-Times by colon (:) and converting them into numerics and then using the mutate function to convert the time into one standard unit, more specifically minutes. For individuals who ran their race in under an hour, we separated their N-Times by colon and made the first value minutes instead of hours. We then combined the two data frames using rbind. We then filtered the data by sex into two separate data frames.
+
+Then for each sex, we filtered the runners by age groups, determining the increments on the scale by calculating the minimum and maximum ages. Then, we calculated the average time for each group using the filter and summarise functions.
+
+We then made two data frames by concatenating the previous data frames we created, one for females and one for males. We renamed the average times to be more contextually concise and then tidied the data by using the gather function, specifying the key to correspond to age groups and value to correspond to average times. 
+
+Next, we made two separate bar plots depicting each sex using the ggplot function. In terms of variables, age groups is on the x-axis and average times (in minutes) is the response variable that we placed on the y-axis. We reordered the age groups chronologically.
+
+These two graphs allowed us to view the relationship between age group and the time it took to run the race.
+
+To make the combined graph, instead of creating two separate data frames for each sex, we followed the same process we explained previously. Then, in sorting the data by age group, we used the group_by() function to group by sex in order to display results for age groups in bars side by side.
+
+**Interpreting Results**
+
+Firstly, by looking at the separate bar plots, we see that both males and females are relatively close in running times in terms of age groups and show a slightly increasing trend. 
+
+To emphasize comparative analysis between males and females, we looked at the combined bar graph and found that males generally had a shorter race time than females from all age groups.
+
+**Appendix**
+Everyone worked together to tidy the data. Joanna and Cindy did the data wrangling and the created the initial data visualizations. Caitlin and Gina re-factored the data visualization to make it more presentable and interpreted the code and results.
+
+Part I Datasets:
+
+* Cindy: Drug Use
+* Caitlin: Steak Survey
+* Gina: 
+* Joanna: Bob Ross
