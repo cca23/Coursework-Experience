@@ -13,7 +13,7 @@
 ## Course Research Paper
 ### Use of Significant Overall Regression for Prediction of Movie Critic Rating in R and Minitab
 #### Jan 2021 – May 2021
-##### *NOTE: Report is included!
+##### *NOTE: CODE for cleaning dataset, cleaned dataset, and Report is included!
 + Performed test for overall regression to determine the significance of movie length and budget in predicting Disney Movie Rotten Tomatoes critic rating
 + Utilized data wrangling skills in R through ‘dplyr’ package to clean dataset from Kaggle
 + Ran regression diagnostics to test for normality, homoscedasticity, and independence in Minitab
