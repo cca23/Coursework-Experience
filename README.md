@@ -3,6 +3,7 @@
 ## Course Report
 ### Predictive Modeling to Understand Rental Bike Demand in R
 #### Jan 2022 - May 2022
+##### *NOTE: Technical Report, Non-Technical Report, and Code are included!
 + Conducted EDA by obtaining summary statistics and using scatterplot and correlation matrices to determine collinearity between numerical predictors
 + Performed 70/30 train-test split technique on 6552 observations
 + Employed best subset selection, ridge regression, LASSO, and random forests methods to build predictive models in measuring bike demand
@@ -12,6 +13,7 @@
 ## Course Research Paper
 ### Use of Significant Overall Regression for Prediction of Movie Critic Rating in R and Minitab
 #### Jan 2021 – May 2021
+##### *NOTE: Report is included!
 + Performed test for overall regression to determine the significance of movie length and budget in predicting Disney Movie Rotten Tomatoes critic rating
 + Utilized data wrangling skills in R through ‘dplyr’ package to clean dataset from Kaggle
 + Ran regression diagnostics to test for normality, homoscedasticity, and independence in Minitab
@@ -19,12 +21,14 @@
 ## Course Research Project
 ### Data Analysis and Visualization of Risk Aversion and Steak Preference in R
 ####	Sept 2020 - Nov 2020
+##### *NOTE: Code and Report are included!
 + Recreated bar plot graphic of ‘steak_survey’ data from ‘fivethirtyeight’ package in R
 +	Utilized data visualization, wrangling, and tidying techniques for proper formatting
 
 ## Group Project
 ### Visual Comparison of 2011 Cherry Blossom Race Runners' Times in R
 ####	Sept 2020 - Nov 2020
+##### *NOTE: Code and Report are included!
 + Analyzed runners’ times in 2011 Cherry Blossom Race for sex and age group
 + Utilized R to create bar plots of runners’ average times grouped by sex and age group
 + Conducted comparative analyses from data visualizations to draw conclusions
